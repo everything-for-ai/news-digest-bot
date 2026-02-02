@@ -1,26 +1,29 @@
-# News Digest Bot / 新闻摘要机器人
+# News Digest Bot / 每日热点汇总
 
 <div class="tabs">
 <details open>
 <summary><span>🇨🇳 中文 (默认)</span></summary>
 
-## 📰 GitHub 热门项目摘要
+## 📰 每日热点汇总
 
-每日推送 GitHub 热门开源项目
+阮一峰博客 + B站热门 + 微博热搜 + 抖音/小红书热点
 
 ### 功能特点
-- ⭐ **真实数据** - 直接调用 GitHub API
-- 🔥 **每日更新** - 自动获取最新热门项目
-- 🤖 **AI 项目** - 专门收录 AI/机器学习项目
-- 📱 **多平台** - 飞书、企业微信、Telegram
+- 📖 **阮一峰博客** - 技术博客 RSS 订阅
+- 📺 **B站热门** - 真实 API 获取
+- 🔥 **微博热搜** - 实时热点
+- 🎵 **抖音热榜** - 短视频热点
+- 📕 **小红书** - 生活方式热点
 
-### 新闻源
+### 支持的来源
 
-| 分类 | 说明 | 示例 |
+| 来源 | 说明 | 数据 |
 |------|------|------|
-| github_trending | 全站热门 | freeCodeCamp, awesome |
-| github_ai | AI 热门项目 | AutoGPT, stable-diffusion |
-| github_new | 新趋势项目 | 最新高星项目 |
+| ruanyifeng | 阮一峰博客 | ✅ 真实 RSS |
+| bilibili | B站热门视频 | ✅ 真实 API |
+| weibo | 微博热搜 | 🔄 模拟数据 |
+| douyin | 抖音热榜 | 🔄 模拟数据 |
+| xiaohongshu | 小红书热点 | 🔄 模拟数据 |
 
 ### 自定义配置
 
@@ -29,7 +32,7 @@
 ```json
 {
     "schedule": "09:00",
-    "sources": ["github_trending", "github_ai"],
+    "sources": ["ruanyifeng", "bilibili", "weibo", "douyin", "xiaohongshu"],
     "count": 5
 }
 ```
@@ -37,7 +40,6 @@
 ### 快速开始
 ```bash
 cd news-digest-bot
-pip install -r requirements.txt
 python news_bot.py
 ```
 
@@ -45,28 +47,20 @@ python news_bot.py
 <details>
 <summary><span>🇺🇸 English</span></summary>
 
-## 📰 GitHub Trending Digest
+## 📰 Daily Hot Topics Summary
 
-Daily GitHub trending open-source projects
+Ruan Yifeng Blog + Bilibili + Weibo + Douyin + Xiaohongshu
 
 ### Features
-- ⭐ **Real Data** - Direct GitHub API
-- 🔥 **Daily Update** - Auto fetch trending projects
-- 🤖 **AI Projects** - AI/ML projects focus
-- 📱 **Multi-platform** - Feishu, WeCom, Telegram
-
-### Sources
-
-| Category | Description | Example |
-|----------|-------------|---------|
-| github_trending | All-time popular | freeCodeCamp, awesome |
-| github_ai | AI trending projects | AutoGPT, langchain |
-| github_new | New trending | Recent high-star projects |
+- 📖 Ruan Yifeng Blog (Tech)
+- 📺 Bilibili Trending
+- 🔥 Weibo Hot Search
+- 🎵 Douyin Trending
+- 📕 Xiaohongshu Trends
 
 ### Quick Start
 ```bash
 cd news-digest-bot
-pip install -r requirements.txt
 python news_bot.py
 ```
 
@@ -75,26 +69,16 @@ python news_bot.py
 
 ---
 
-## 项目结构
-
-```
-news-digest-bot/
-├── news_bot.py       # 主程序
-├── config.json       # 配置文件
-└── requirements.txt  # 依赖
-```
-
-## 依赖
-
-```
-requests
-```
-
 ## 数据来源
 
-- GitHub REST API (https://api.github.com)
-- 免费，无需 API Key
+| 来源 | 链接 | 状态 |
+|------|------|------|
+| 阮一峰博客 | ruanyifeng.com | ✅ RSS |
+| B站热门 | api.bilibili.com | ✅ API |
+| 微博热搜 | weibo.com | 🔄 模拟 |
+| 抖音热榜 | douyin.com | 🔄 模拟 |
+| 小红书 | xiaohongshu.com | 🔄 模拟 |
 
-## License
+---
 
-MIT
+*由 everything-for-ai 项目提供*
