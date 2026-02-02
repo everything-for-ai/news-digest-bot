@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """
 News Digest Bot - 每日新闻摘要
-支持自定义 RSS 订阅源
+使用 GitHub API 获取真实科技趋势，无需 API Key
 """
 
 import os
 import json
+import requests
 from datetime import datetime
 from typing import Dict, List
 
@@ -15,19 +16,16 @@ class NewsDigestBot:
     
     def __init__(self, config_file: str = "config.json"):
         self.config = self.load_config(config_file)
-        
-        # 默认 RSS 源
-        self.rss_sources = self.config.get("rss_sources", [
-            "https://feeds.feedburner.com/TechCrunch/",
-            "https://wired.com/feed/tag/ai/latest/rss"
-        ])
+        self.session = requests.Session()
+        self.session.headers.update({
+            "Accept": "application/vnd.github.v3+json"
+        })
     
     def load_config(self, config_file: str) -> Dict:
         default_config = {
             "schedule": "09:00",
-            "sources": ["tech", "ai"],
+            "sources": ["github_trending", "github_ai"],
             "count": 5,
-            "rss_sources": []
         }
         
         if os.path.exists(config_file):
@@ -37,48 +35,96 @@ class NewsDigestBot:
         
         return default_config
     
-    def get_tech_news(self) -> List[Dict]:
-        """科技新闻 - 使用长期有效的科技趋势新闻"""
-        return [
-            {"title": "VS Code 继续保持最受欢迎开发工具地位", "source": "Stack Overflow"},
-            {"title": "Docker 和 Kubernetes 仍是容器化标准", "source": "CNCF"},
-            {"title": "GitHub Actions 成为最流行的 CI/CD 工具", "source": "GitHub"},
-            {"title": "TypeScript 连续多年保持增长", "source": "State of JS"},
-            {"title": "Linux 内核 30 周年，Torvalds 发表讲话", "source": "LWN"},
-            {"title": "React 和 Vue 主导前端框架市场", "source": "JS Survey"}
-        ]
+    def get_github_trending(self) -> List[Dict]:
+        """获取 GitHub 热门项目"""
+        try:
+            url = "https://api.github.com/search/repositories"
+            params = {
+                "q": "stars:>10000",
+                "sort": "stars",
+                "per_page": 10
+            }
+            resp = self.session.get(url, params=params, timeout=10)
+            
+            if resp.status_code == 200:
+                data = resp.json()
+                news = []
+                for item in data.get('items', [])[:10]:
+                    news.append({
+                        "title": item.get('name', 'No name'),
+                        "url": item.get('html_url', '#'),
+                        "source": "GitHub Trending",
+                        "stars": item.get('stargazers_count', 0),
+                        "description": item.get('description', '')[:100]
+                    })
+                return news
+        except Exception as e:
+            print(f"GitHub Error: {e}")
+        return []
     
-    def get_ai_news(self) -> List[Dict]:
-        """AI 新闻 - 使用已发布的真实产品和趋势"""
-        return [
-            {"title": "ChatGPT 用户突破 2 亿，成为增长最快产品", "source": "OpenAI"},
-            {"title": "Claude 在编程任务中表现优异", "source": "Anthropic"},
-            {"title": "GitHub Copilot 帮助开发者效率提升 55%", "source": "GitHub"},
-            {"title": "中国 AI 大模型数量超过 100 个", "source": "工信部"},
-            {"title": "Python 连续多年被评为最受欢迎编程语言", "source": "TIOBE"},
-            {"title": "AI 辅助编程工具成为开发者标配", "source": "JetBrains"}
-        ]
+    def get_github_ai(self) -> List[Dict]:
+        """获取 AI 相关热门项目"""
+        try:
+            url = "https://api.github.com/search/repositories"
+            params = {
+                "q": "topic:AI language:Python stars:>5000",
+                "sort": "stars",
+                "per_page": 10
+            }
+            resp = self.session.get(url, params=params, timeout=10)
+            
+            if resp.status_code == 200:
+                data = resp.json()
+                news = []
+                for item in data.get('items', [])[:10]:
+                    news.append({
+                        "title": item.get('name', 'No name'),
+                        "url": item.get('html_url', '#'),
+                        "source": "GitHub AI",
+                        "stars": item.get('stargazers_count', 0),
+                        "description": item.get('description', '')[:100]
+                    })
+                return news
+        except Exception as e:
+            print(f"GitHub AI Error: {e}")
+        return []
     
-    def get_finance_news(self) -> List[Dict]:
-        """财经新闻 - 使用长期趋势类新闻"""
-        return [
-            {"title": "纳指 100 成分股调整，科技股占比稳定", "source": "NASDAQ"},
-            {"title": "全球半导体产业销售额创历史新高", "source": "SIA"},
-            {"title": "中国新能源汽车渗透率持续提升", "source": "中汽协"},
-            {"title": "比特币 ETF 获得 SEC 批准上市", "source": "SEC"},
-            {"title": "A股市场机构化程度不断提高", "source": "证监会"},
-            {"title": "港股通持续吸引南下资金", "source": "港交所"}
-        ]
+    def get_github_new(self) -> List[Dict]:
+        """获取最新热门项目"""
+        try:
+            url = "https://api.github.com/search/repositories"
+            params = {
+                "q": "created:>2025-01-01 stars:>1000",
+                "sort": "stars",
+                "per_page": 10
+            }
+            resp = self.session.get(url, params=params, timeout=10)
+            
+            if resp.status_code == 200:
+                data = resp.json()
+                news = []
+                for item in data.get('items', [])[:10]:
+                    news.append({
+                        "title": item.get('name', 'No name'),
+                        "url": item.get('html_url', '#'),
+                        "source": "GitHub New",
+                        "stars": item.get('stargazers_count', 0),
+                        "description": item.get('description', '')[:100]
+                    })
+                return news
+        except Exception as e:
+            print(f"GitHub New Error: {e}")
+        return []
     
-    def get_news(self, category: str = "tech") -> List[Dict]:
+    def get_news(self, source: str = "github_trending") -> List[Dict]:
         """获取新闻"""
         source_map = {
-            "tech": self.get_tech_news,
-            "ai": self.get_ai_news,
-            "finance": self.get_finance_news
+            "github_trending": self.get_github_trending,
+            "github_ai": self.get_github_ai,
+            "github_new": self.get_github_new
         }
         
-        func = source_map.get(category, self.get_tech_news)
+        func = source_map.get(source, self.get_github_trending)
         return func()
     
     def format_news_message(self, news: List[Dict]) -> str:
@@ -86,36 +132,30 @@ class NewsDigestBot:
         if not news:
             return "📰 暂无新闻"
         
-        lines = [f"📰 每日新闻摘要 - {datetime.now().strftime('%Y-%m-%d %H:%M')}\n"]
+        lines = [f"📰 GitHub 热门项目 - {datetime.now().strftime('%Y-%m-%d %H:%M')}\n"]
         
         for i, item in enumerate(news[:10], 1):
             title = item.get('title', '无标题')
-            source = item.get('source', 'Unknown')[:15]
-            lines.append(f"{i}. {title}")
-            lines.append(f"   📰 {source}")
+            source = item.get('source', 'Unknown')
+            stars = item.get('stars', 0)
+            desc = item.get('description', '')[:50]
+            lines.append(f"{i}. ⭐ {title}")
+            lines.append(f"   {desc}...")
+            lines.append(f"   📰 {source} | ★ {stars:,}")
         
-        lines.append("\n#新闻 #每日摘要")
+        lines.append("\n#GitHub #热门项目 #科技")
         return '\n'.join(lines)
     
     def run(self) -> str:
         """主程序"""
         all_news = []
         
-        for category in self.config.get("sources", ["tech", "ai"]):
-            news = self.get_news(category)
+        for source in self.config.get("sources", ["github_trending"]):
+            news = self.get_news(source)
             count = self.config.get("count", 5)
             all_news.extend(news[:count])
         
-        # 去重
-        seen = set()
-        unique_news = []
-        for item in all_news:
-            key = item.get('title', '')
-            if key and key not in seen:
-                seen.add(key)
-                unique_news.append(item)
-        
-        message = self.format_news_message(unique_news)
+        message = self.format_news_message(all_news)
         print(message)
         return message
 

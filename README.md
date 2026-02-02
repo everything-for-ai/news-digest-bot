@@ -4,23 +4,23 @@
 <details open>
 <summary><span>🇨🇳 中文 (默认)</span></summary>
 
-## 📰 新闻摘要机器人
+## 📰 GitHub 热门项目摘要
 
-每日自动推送精选新闻摘要
+每日推送 GitHub 热门开源项目
 
 ### 功能特点
-- 📰 **多分类新闻** - 科技、AI、财经
-- ⏰ **定时推送** - 每天 09:00 自动推送
-- 🔗 **RSS 支持** - 可自定义订阅源
+- ⭐ **真实数据** - 直接调用 GitHub API
+- 🔥 **每日更新** - 自动获取最新热门项目
+- 🤖 **AI 项目** - 专门收录 AI/机器学习项目
 - 📱 **多平台** - 飞书、企业微信、Telegram
 
-### 支持的分类
+### 新闻源
 
-| 分类 | 说明 | 默认 |
+| 分类 | 说明 | 示例 |
 |------|------|------|
-| tech | 科技新闻 | ✅ |
-| ai | AI 人工智能 | ✅ |
-| finance | 财经新闻 | ❌ |
+| github_trending | 全站热门 | freeCodeCamp, awesome |
+| github_ai | AI 热门项目 | AutoGPT, stable-diffusion |
+| github_new | 新趋势项目 | 最新高星项目 |
 
 ### 自定义配置
 
@@ -29,12 +29,8 @@
 ```json
 {
     "schedule": "09:00",
-    "sources": ["tech", "ai", "finance"],
-    "count": 5,
-    "rss_sources": [
-        "https://feeds.feedburner.com/TechCrunch/",
-        "https://wired.com/feed/tag/ai/latest/rss"
-    ]
+    "sources": ["github_trending", "github_ai"],
+    "count": 5
 }
 ```
 
@@ -49,35 +45,23 @@ python news_bot.py
 <details>
 <summary><span>🇺🇸 English</span></summary>
 
-## 📰 News Digest Bot
+## 📰 GitHub Trending Digest
 
-Daily automated news digest
+Daily GitHub trending open-source projects
 
 ### Features
-- 📰 **Multi-category** - Tech, AI, Finance
-- ⏰ **Scheduled push** - Daily at 09:00
-- 🔗 **RSS support** - Customizable feeds
+- ⭐ **Real Data** - Direct GitHub API
+- 🔥 **Daily Update** - Auto fetch trending projects
+- 🤖 **AI Projects** - AI/ML projects focus
 - 📱 **Multi-platform** - Feishu, WeCom, Telegram
 
-### Supported Categories
+### Sources
 
-| Category | Description | Default |
+| Category | Description | Example |
 |----------|-------------|---------|
-| tech | Technology news | ✅ |
-| ai | Artificial Intelligence | ✅ |
-| finance | Finance news | ❌ |
-
-### Configuration
-
-Edit `config.json`:
-
-```json
-{
-    "schedule": "09:00",
-    "sources": ["tech", "ai", "finance"],
-    "count": 5
-}
-```
+| github_trending | All-time popular | freeCodeCamp, awesome |
+| github_ai | AI trending projects | AutoGPT, langchain |
+| github_new | New trending | Recent high-star projects |
 
 ### Quick Start
 ```bash
@@ -105,6 +89,11 @@ news-digest-bot/
 ```
 requests
 ```
+
+## 数据来源
+
+- GitHub REST API (https://api.github.com)
+- 免费，无需 API Key
 
 ## License
 
